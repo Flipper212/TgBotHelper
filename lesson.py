@@ -85,7 +85,7 @@ def main():
 
     print(f_hour, f_minute, hour, minute)
     result_str = (int(f_hour) * 3600 + int(f_minute) * 60 - int(hour) * 3600 - int(minute) * 60)//60
-    return [result_str, week[count_day][index+2], is_start, is_end]
+    return [result_str, week[count_day][index+2], is_start, is_end, is_work_day]
 
 
 result = main()

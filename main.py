@@ -33,11 +33,15 @@ def user_write(message):
             with open("add/lessons.webp", "rb") as sti:
                 bot.send_photo(message.chat.id, sti)
         elif message.text == "♦BETA:До кінця уроку":
-            if lesson.is_work_day is False:
+            if lesson.main()[-1] is False:
                 bot.send_message(message.chat.id, "<b>Сьогодні не має уроків</b>🥰", parse_mode="html")
-            elif lesson.is_start:
-                bot.send_message(message.chat.id, f"Урок закінчиться через <b>{lesson.main()[0]}</b>, наступний <b>{lesson.main()[1]}</b>", parse_mode="html")
-            elif lesson.is_end:
+            elif lesson.main()[0] > 40:
+                bot.send_message(message.chat.id,
+                                 f"<b>{lesson.main()[1]}</b> почнеться через <b>{40 - lesson.main()[0]}</b> хв ",
+                                 parse_mode="html")
+            elif lesson.main()[2]:
+                bot.send_message(message.chat.id, f"Урок закінчиться через <b>{lesson.main()[0]}</b> хв, наступний <b>{lesson.main()[1]}</b>", parse_mode="html")
+            elif lesson.main()[3]:
                 bot.send_message(message.chat.id, "<b>Уроки закінчились</b>🥰", parse_mode="html")
         elif message.text == "🎲Рандом від 1 до 100":
             bot.send_message(message.chat.id, str(randint(1, 100)))
