@@ -6,7 +6,6 @@ import lesson
 
 
 bot = telebot.TeleBot(config.TOKEN)
-print(111111, lesson.result)
 
 
 @bot.message_handler(commands=["start"])
@@ -26,18 +25,18 @@ def welcome(message):
         message.from_user, bot.get_me()), parse_mode="html", reply_markup=markup)
 
 
-@bot.message_handler(content_types = ["text"])
+@bot.message_handler(content_types=["text"])
 def user_write(message):
     if message.chat.type == "private":
         if message.text == "📄Розклад":
             with open("add/lessons.webp", "rb") as sti:
                 bot.send_photo(message.chat.id, sti)
         elif message.text == "♦BETA:До кінця уроку":
-            if lesson.main()[-1] is False:
+            if lesson.main() is False:
                 bot.send_message(message.chat.id, "<b>Сьогодні не має уроків</b>🥰", parse_mode="html")
-            elif lesson.main()[0] > 40:
+            elif lesson.main()[0] >= 40:
                 bot.send_message(message.chat.id,
-                                 f"<b>{lesson.main()[1]}</b> почнеться через <b>{40 - lesson.main()[0]}</b> хв ",
+                                 f"<b>{lesson.main()[1]}</b> почнеться через <b>{lesson.main()[0]-40}</b> хв ",
                                  parse_mode="html")
             elif lesson.main()[2]:
                 bot.send_message(message.chat.id, f"Урок закінчиться через <b>{lesson.main()[0]}</b> хв, наступний <b>{lesson.main()[1]}</b>", parse_mode="html")
@@ -81,7 +80,7 @@ def callback_inline(call):
 
             #show alert
             bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Дякую за використання😊")
-    except Exception as error:
-        print(repr(error))
+    except Exception:
+        pass
 
 bot.polling(none_stop=True)
