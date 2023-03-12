@@ -32,16 +32,22 @@ def user_write(message):
             with open("add/lessons.webp", "rb") as sti:
                 bot.send_photo(message.chat.id, sti)
         elif message.text == "♦BETA:До кінця уроку":
-            if lesson.main() is False:
-                bot.send_message(message.chat.id, "<b>Сьогодні не має уроків</b>🥰", parse_mode="html")
-            elif lesson.main()[0] >= 40:
-                bot.send_message(message.chat.id,
-                                 f"<b>{lesson.main()[1]}</b> почнеться через <b>{lesson.main()[0]-40}</b> хв ",
-                                 parse_mode="html")
-            elif lesson.main()[2]:
-                bot.send_message(message.chat.id, f"Урок закінчиться через <b>{lesson.main()[0]}</b> хв, наступний <b>{lesson.main()[1]}</b>", parse_mode="html")
-            elif lesson.main()[3]:
-                bot.send_message(message.chat.id, "<b>Уроки закінчились</b>🥰", parse_mode="html")
+            if lesson.main()[0] is False:
+                if lesson.main()[1] == 1:
+                    bot.send_message(message.chat.id, "<b>Сьогодні не має уроків</b>🥰", parse_mode="html") 
+                elif lesson.main()[1] == 2:
+                    bot.send_message(message.chat.id, "<b>Уроки закінчились</b>🥰", parse_mode="html")
+            elif lesson.main()[0] > 40 and lesson.main()[-1] is False and lesson.main()[2]:
+                bot.send_message(message.chat.id, f"<b>{lesson.main()[1]}</b> почнеться через <b>{lesson.main()[0]-40} хв</b> ", parse_mode="html")
+            elif lesson.main()[0] > 40 and lesson.main()[-1] is False and lesson.main()[2] is False:
+                bot.send_message(message.chat.id, f"<b>{lesson.main()[1]}</b> почнеться через <b>{lesson.main()[0]} хв</b> ", parse_mode="html")
+            elif lesson.main()[2] and lesson.main()[-1] is False:
+                bot.send_message(message.chat.id, f"Урок закінчиться через <b>{lesson.main()[0]} хв</b>, наступний <b>{lesson.main()[1]}</b>", parse_mode="html")
+            elif lesson.main()[2] and lesson.main()[-1]:
+                bot.send_message(message.chat.id, f"Урок закінчиться через <b>{lesson.main()[0]} хв</b>, <b>{lesson.main()[1]}</b>", parse_mode="html")
+            #result_str, week[count_day][index], is_start, is_end, is_last
+            
+            
         elif message.text == "🎲Рандом від 1 до 100":
             bot.send_message(message.chat.id, str(randint(1, 100)))
         elif message.text == "🥰Як справи":

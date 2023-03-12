@@ -17,19 +17,20 @@ lesson_time_int = {"830": "910", "920": "1000", "1010": "1050", "1100": "1140", 
 
 def main():
     now_time = str(datetime.datetime.now().time())
-    hour = now_time.split(":")[0]
-    minute = now_time.split(":")[1]
+    hour = "00"#now_time.split(":")[0]
+    minute = "00"#now_time.split(":")[1]
     index = 0
     lesson_fix_time = None
 
     is_start = True
     is_end = False
     is_work_day = True
+    is_last = False
     global count_day
     count_day = 1#datetime.datetime.now().weekday()
 
     if count_day in (0, 6):
-        return False
+        return [False, 1]
 
     if 0 < count_day < 6:
         if str(hour)[0] == "0":
@@ -42,10 +43,12 @@ def main():
     elif 830 <= time_str < 1430 and 2 < count_day < 6 or 830 <= time_str < 1520 and 0 < count_day < 3:
         while int(list(lesson_time_int.values())[index]) < time_str:
             index += 1
-    elif time_str > 1430 and 2 < count_day < 6:
+    if time_str >= 1430 and 2 < count_day < 6:
         is_end = True
-    elif time_str > 1520 and 0 < count_day < 3:
+        return [False, 2]
+    if time_str >= 1520 and 0 < count_day < 3:
         is_end = True
+        return [False, 2]
 
     if is_start:
         lesson_fix_time = list(lesson_time.values())[index]
@@ -72,6 +75,9 @@ def main():
         minute = int(minute)
     except ValueError:
         hour = int(minute[-1])
-
+    
+    if week[count_day][index] == week[count_day][-1]: is_last = True
     result_str = (int(f_hour) * 3600 + int(f_minute) * 60 - int(hour) * 3600 - int(minute) * 60)//60
-    return [result_str, week[count_day][index+1], is_start, is_end]
+    if is_start:
+        return [result_str, "Це останній Урок🥰" if is_last else week[count_day][index+1], is_start, is_end, is_last]
+    else: return [result_str, "Це останній Урок🥰" if is_last else week[count_day][index], is_start, is_end, is_last]
