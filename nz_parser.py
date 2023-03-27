@@ -2,13 +2,12 @@ from bs4 import BeautifulSoup as Bs
 from time import sleep
 import undetected_chromedriver as uc
 from datetime import datetime
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 def browser():
 
     options = uc.ChromeOptions()
-    driver = uc.Chrome(driver_executable_path=ChromeDriverManager().install(), options=options, headless=False)
+    driver = uc.Chrome(driver_executable_path="add/chromedriver", options=options, headless=False)
     driver.get("https://nz.ua/login")
     sleep(1)
     username_input = driver.find_element(by="name", value="LoginForm[login]")
