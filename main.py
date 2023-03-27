@@ -3,10 +3,14 @@ import config
 from telebot import types
 from random import randint
 import lesson
+import nz_parser as nz
+import time
 
 
 bot = telebot.TeleBot(config.TOKEN)
-
+first_time = True
+last_callback = {}
+cooldown_time = 600
 
 @bot.message_handler(commands=["start"])
 def welcome(message):
@@ -16,11 +20,12 @@ def welcome(message):
     # keyboard
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     key1 = types.KeyboardButton("🎲Рандом від 1 до 100")
-    key2 = types.KeyboardButton("🥰Як справи")
-    key3 = types.KeyboardButton("😏ГДЗ")
-    key4 = types.KeyboardButton("📄Розклад")
-    key5 = types.KeyboardButton("🛠BETA:До кінця уроку")
-    markup.add(key1, key2, key3, key4, key5)
+    key2 = types.KeyboardButton("😏ГДЗ")
+    key3 = types.KeyboardButton("📄Розклад")
+    key4 = types.KeyboardButton("⏰До кінця уроку")
+    key5 = types.KeyboardButton("⏳Уроки на завтра (2 група)")
+    key6 = types.KeyboardButton("❗Оновити бота")
+    markup.add(key1, key2, key3, key4, key5, key6)
     bot.send_message(message.chat.id, "Привіт {0.first_name}!\nЯ <b>{1.first_name}</b> бот який буде тобі допомагати, "
                                       "бот буде дороблятися із часом. \nGithub: Flipper212".format(
                                         message.from_user, bot.get_me()), parse_mode="html", reply_markup=markup)
@@ -32,19 +37,25 @@ def user_write(message):
         if message.text == "📄Розклад":
             with open("add/lessons.webp", "rb") as sti:
                 bot.send_photo(message.chat.id, sti)
-        elif message.text == "🛠BETA:До кінця уроку":
+        elif message.text == "⏰До кінця уроку":
             bot.send_message(message.chat.id, lesson.make_result(), parse_mode="html")
             # result_str, week[count_day][index], is_start, is_end, is_last
+        elif message.text == "⏳Уроки на завтра (2 група)":
+            if last_callback.get(message.from_user.id) is None or time.time() - last_callback[message.from_user.id] > cooldown_time:
+                last_callback[message.from_user.id] = time.time()
+                bot.send_message(message.chat.id, "Виконую...")
+                try:
+                    bot.send_message(message.chat.id, nz.make_string(), parse_mode="html")
+                except telebot.apihelper.ApiTelegramException:
+                    bot.send_message(message.chat.id, "Немає домашнього завдання🤩")
+                except Exception:
+                    bot.send_message(message.chat.id, "Щось пішло не так")
+            else:
+                bot.send_message(message.chat.id, "Раз на 10 хв😴")
+        elif message.text == "❗Оновити бота":
+            welcome(message)
         elif message.text == "🎲Рандом від 1 до 100":
             bot.send_message(message.chat.id, str(randint(1, 100)))
-        elif message.text == "🥰Як справи":
-            #  InlineButton
-            markup = types.InlineKeyboardMarkup(row_width=2)
-            key1 = types.InlineKeyboardButton("Все добре", callback_data="good")
-            key2 = types.InlineKeyboardButton("Не дуже", callback_data="bad")
-            markup.add(key1, key2)
-
-            bot.send_message(message.chat.id, "Чудово, ти як?", reply_markup=markup)
         elif message.text == "😏ГДЗ":
             markup = types.InlineKeyboardMarkup(row_width=2)
             key1 = types.InlineKeyboardButton("Алгебра", url = "https://vshkole.com/9-klass/reshebniki/algebra/ag-merzlyak-vb-polonskij-ms-yakir-2017-pogliblene-vivchennya")
@@ -59,19 +70,5 @@ def user_write(message):
         else:
             bot.send_message(message.chat.id, "😓я не розпізнав команду")
 
-
-@bot.callback_query_handler(func=lambda call: True)
-def callback_inline(call):
-    if call.message:
-        if call.data == "good":
-            bot.send_message(call.message.chat.id, "Це добре😋")
-        elif call.data == "bad":
-            bot.send_message(call.message.chat.id, "Це погано😔")
-
-        #  remove inline button
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text="🥰 Як справи", reply_markup=None)
-
-        #  show alert
-        bot.answer_callback_query(callback_query_id=call.id, show_alert=False, text="Дякую за використання😊")
 
 bot.polling(none_stop=True)
