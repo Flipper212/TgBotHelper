@@ -12,6 +12,7 @@ first_time = True
 last_callback = {}
 cooldown_time = 600
 
+
 @bot.message_handler(commands=["start"])
 def welcome(message):
     sti_hi = open("add/hi.webp", "rb")

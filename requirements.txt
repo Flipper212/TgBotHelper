@@ -1,5 +1,5 @@
-datetime
-pytz
+telebot
 bs4
 undetected_chromedriver
 webdriver_manager.chrome
+datetime
