@@ -1,5 +1,5 @@
 telebot
-bs4
+beautifulsoup4
 undetected_chromedriver
-webdriver_manager.chrome
+webdriver_manager
 datetime
