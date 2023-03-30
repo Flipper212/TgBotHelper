@@ -1,13 +1,12 @@
-from bs4 import BeautifulSoup as Bs
+from bs4 import BeautifulSoup as Bs4
 from time import sleep
 import undetected_chromedriver as uc
 from datetime import datetime
 
 
 def browser():
-
     options = uc.ChromeOptions()
-    driver = uc.Chrome(driver_executable_path="add/chromedriver", options=options, headless=False)
+    driver = uc.Chrome(chrome_executable_path="add/chromedriver", options=options, headless=True, version_main=90)
     driver.get("https://nz.ua/login")
     sleep(1)
     username_input = driver.find_element(by="name", value="LoginForm[login]")
@@ -33,7 +32,7 @@ def get_args():
     lesson_count = 8 if now_day in (1, 2) else 7
 
     source = browser()
-    soup = Bs(source, "lxml")
+    soup = Bs4(source, "lxml")
     today_part = soup.find_all("div", class_="dn-item")[next_day-1]
     lessons = today_part.find_all("div", class_="part-left")
     homework_page = today_part.find_all("div", class_="part-right")
