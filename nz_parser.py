@@ -2,19 +2,18 @@ from bs4 import BeautifulSoup as Bs4
 from time import sleep
 from datetime import datetime
 from undetected_chromedriver import Chrome
-from main import user, pas
 
 
 def browser(next_week):
-    driver = Chrome(executable_path="add/chromedriver")
+    driver = Chrome(executable_path="add/chromedriver", headless=True)
     driver.get("https://nz.ua/login")
     sleep(.5)
 
     username_input = driver.find_element(by="name", value="LoginForm[login]")
-    username_input.send_keys(user)
+    username_input.send_keys("semenyuk_stanislav4")
 
     password_input = driver.find_element(by="name", value="LoginForm[password]")
-    password_input.send_keys(pas)
+    password_input.send_keys("632140ar")
 
     button = driver.find_element(by="css selector", value="#login-form > fieldset > div:nth-child(5) > a.ms-button.form-submit-btn")
     button.click()

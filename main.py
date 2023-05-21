@@ -3,13 +3,11 @@ import config
 from telebot import types
 from random import randint
 import lesson
-import nz_parser as nz
+from nz_parser import make_string
 
 
 bot = telebot.TeleBot(config.TOKEN)
 is_hom_work = True
-user = input("Login: ")
-pas = input("Password: ")
 
 
 @bot.message_handler(commands=["start"])
@@ -34,7 +32,7 @@ def welcome(message):
 @bot.message_handler(content_types=["text"])
 def user_write(message):
     if message.chat.type == "private":
-        if message.text == "📄Розклад":
+        if message.text == "🧾Розклад":
             with open("add/lessons.webp", "rb") as sti:
                 bot.send_photo(message.chat.id, sti)
         elif message.text == "⏰До кінця уроку":
@@ -43,7 +41,7 @@ def user_write(message):
         elif message.text == "⏳Уроки на завтра (2 група)":
             bot.send_message(message.chat.id, "Виконую...")
             try:
-                bot.send_message(message.chat.id, nz.make_string(user, pas), parse_mode="html")
+                bot.send_message(message.chat.id, make_string(), parse_mode="html")
             except telebot.apihelper.ApiTelegramException:
                 bot.send_message(message.chat.id, "Немає домашнього завдання🤩")
             except FileExistsError:
